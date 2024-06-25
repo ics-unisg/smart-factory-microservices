@@ -1,0 +1,117 @@
+services:
+
+  zookeeper:
+    image: "bitnami/zookeeper:latest"
+    hostname: zookeeper
+    networks:
+      - factory
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
+
+  kafka:
+    image: "bitnami/kafka:latest"
+    hostname: kafka
+    networks:
+      - factory
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  camunda:
+    image: camunda/camunda-bpm-platform:latest
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  ec:
+    container_name: ec
+    networks:
+      - factory
+    ports:
+      - "8010:8010"
+      - "7010:7010"
+      - "5001:5001"
+    build:
+      context: ./ec/
+      dockerfile: Dockerfile_EC
+
+  mm:
+    container_name: mm
+    networks:
+      - factory
+    ports:
+      - "8011:8011"
+      - "7011:7011"
+      - "5003:5003"
+    build:
+      context: ./mm/
+      dockerfile: Dockerfile_MM
+
+  hbw:
+    container_name: hbw
+    networks:
+      - factory
+    ports:
+      - "8012:8012"
+      - "7012:7012"
+      - "5002:5002"
+    build:
+      context: ./hbw/
+      dockerfile: Dockerfile_HBW
+
+  vgr:
+    container_name: vgr
+    networks:
+      - factory
+    ports:
+      - "8013:8013"
+      - "7013:7013"
+      - "5006:5006"
+    build:
+      context: ./vgr/
+      dockerfile: Dockerfile_VGR
+
+  sm:
+    container_name: sm
+    networks:
+      - factory
+    ports:
+      - "8014:8014"
+      - "7014:7014"
+      - "5005:5005"
+    build:
+      context: ./sm/
+      dockerfile: Dockerfile_SM
+
+
+  ov:
+    container_name: ov
+    networks:
+      - factory
+    ports:
+      - "8015:8015"
+      - "7015:7015"
+      - "8415:8015"
+      - "7615:7015"
+      - "5004:5004"
+    build:
+      context: ./ov/
+      dockerfile: Dockerfile_OV
+
+networks:
+  factory:
+    driver: bridge

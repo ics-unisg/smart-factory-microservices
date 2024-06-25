@@ -1,0 +1,11 @@
+requests==2.22.0
+Click==7.0
+Flask==1.1.1
+ftrobopy==1.80
+itsdangerous==1.1.0
+Jinja2==2.10.3
+MarkupSafe==1.1.1
+Werkzeug==0.16.0
+paho-mqtt~=1.5.0
+matplotlib~=3.3.1
+flasgger~=0.9.5
